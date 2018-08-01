@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: alluxio-moniter-dashboard
+  namespace: ava
+spec:
+  selector:
+    ava-app: alluxio-moniter-dashboard
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

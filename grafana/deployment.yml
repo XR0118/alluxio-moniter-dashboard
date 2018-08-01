@@ -1,0 +1,65 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    ava-app: alluxio-moniter-dashboard
+  name: alluxio-moniter-dashboard
+  namespace: ava
+spec:
+  replicas: 1
+  minReadySeconds: 3
+  selector:
+    matchLabels:
+      ava-app: alluxio-moniter-dashboard
+      version: 201808010000
+  template:
+    metadata:
+      labels:
+        ava-app: alluxio-moniter-dashboard
+        version: 201808010000
+    spec:
+      # imagePullSecrets:
+      # - name: atlab-images
+      containers:
+      - name: grafana
+        imagePullPolicy: Always
+        image: 'grafana/grafana'
+        ports:
+        - name: service-port
+          containerPort: 3000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config/grafana.ini
+          subPath: grafana.ini
+        - name: config-volume
+          mountPath: /config/provisioning/datasources/datasource.yaml
+          subPath: datasource.yaml
+        - name: config-volume
+          mountPath: /config/provisioning/dashboards/dashboard.yaml
+          subPath: dashboard.yaml
+        - name: tz-config
+          mountPath: /etc/localtime
+          readOnly: true
+        livenessProbe:
+          failureThreshold: 3
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        readinessProbe:
+          failureThreshold: 3
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+      volumes:
+      - name: config-volume
+        configMap:
+          name: alluxio-moniter-dashboard-config
+      - name: tz-config
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai

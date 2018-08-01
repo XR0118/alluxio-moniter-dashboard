@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alluxio-moniter-dashboard-config
+  namespace: ava
+data:
+  grafana.ini: |-
+    [server]
+    root_url = http://dashboard.ava-alluxio.kegate-xs.cloudappl.com
+    [security]
+    admin_user = ava-admin
+    admin_password = ava-admin
+    [users]
+    viewers_can_edit = true
+    [auth.anonymous]
+    enabled = true
+  dashboard.yaml: |-
+    apiVersion: 201808010000
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      options:
+        path: /data/dashboards/
+  datasource.yaml: |-
+    apiVersion: 201808010000
+    datasources:
+    - name: DS_JQ-K8S-PROM
+      type: prometheus
+      access: proxy
+      orgId: 1
+      url: http://ava.prometheus.kegate-jq.cloudappl.com
+      isDefault: true
+      version: 1
+      editable: false

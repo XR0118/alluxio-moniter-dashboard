@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: alluxio-moniter-dashboard
+  namespace: ava
+  annotations:
+    nginx.org/websocket-services: "alluxio-moniter-dashboard"
+    kubernetes.io/ingress.class: public
+spec:
+  rules:
+  - host: dashboard.ava-alluxio.kegate-xs.cloudappl.com
+    http:
+      paths:
+      - backend:
+          serviceName: alluxio-moniter-dashboard
+          servicePort: 80
+        path: /
